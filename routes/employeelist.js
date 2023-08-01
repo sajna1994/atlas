@@ -1,56 +1,53 @@
-const express = require('express');
-const router = express.Router();
-router.use(express.json());
-router.use(express.urlencoded({extended:true}));
-const employeeData=require('../model/EmployeelistData')
-// Get operation
+const router = require('express').Router();
+const employeeDATA = require('../model/EmployeelistData')
 router.get('/employeelist',async(req,res)=>{
     try {
-        const data=await employeeData.find();
-        res.status(200).json(data);
-        } catch (error) {
-        res.status(400).json('cannot get');
+        let data = await employeeDATA.find()
+        res.send(data)
+    } catch (error) {
+        res.send(error.message)
     }
 })
-// post Operation
+router.get('/employeelist/:id',async(req,res)=>{
+    try {
+        let id = req.params.id
+        let data = await employeeDATA.findById(id)
+        res.send(data)
+    } catch (error) {
+        res.send(error.message)
+    }
+})
 router.post('/addemployeelist',async(req,res)=>{
-try {
-    const item=req.body;
-    const newdata=new employeeData(item);
-    const savedData=await newdata.save();
-    res.status(200).json('post successful');
-} catch (error) {
-   res.status(400).json('No post');
-}
-})
-//update operation
-router.put('/employeelist:id',async(req,res)=>{
     try {
-        let id =req.params.id;
-        console.log('id checked',id)
-        let updateData ={$set:req.body}
-        const updated =await employeeData.findByIdAndUpdate(id,updateData)
-        res.json(updated)
+        console.log(req.body)
+        const { name, location, position ,salary } = req.body;
+        const employee = await employeeDATA({ name, location, position, salary });
+        employee.save()  
+        res.json('success')
     } catch (error) {
-        console.log(error);
+        console.log(error)
+        res.json('error')
+    }
+})
+router.put('/employeelist',async(req,res)=>{
+    try {
+       id = req.body._id
+       let updateData = {$set:req.body}
+       const updated = await employeeDATA.findByIdAndUpdate(id, updateData)
+        res.json('updated new')
+    } catch (error) {
+        // console.log(error)
         res.send('error')
     }
 })
-//delete operation
-router.delete('/employeelist:id',async(req,res)=>{
+router.delete('/employeelist/:id',async(req,res)=>{
     try {
-        let id =req.params.id;
-        console.log('id checked',id)
-        let updateData ={$set:req.body}
-        const updated =await employeeData.findByIdAndDelete(id)
-        res.json("deleted")
+        let id = req.params.id
+       const updated = await employeeDATA.findByIdAndDelete(id)
+        res.json('deleted')
     } catch (error) {
-        console.log(error);
+        console.log(error)
         res.send('error')
     }
 })
-
-
-
-
-module.exports=router;
+module.exports = router
