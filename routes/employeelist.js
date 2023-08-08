@@ -29,22 +29,32 @@ router.post('/employeelist',async(req,res)=>{
         res.json('error')
     }
 })
-router.put('/employeelist/:id', async (req, res) => {
+// router.put('/employeelist/:id', async (req, res) => {
+//     try {
+//         let id = req.params.id;
+//         const { name, location, position, salary } = req.body;
+//         const updatedEmployee = await employeeData.findByIdAndUpdate(
+//             id,
+//             { name, location, position, salary },
+//             { new: true } 
+//         );
+//         res.json(updatedEmployee);
+//     } catch (error) {
+//         console.log(error);
+//         res.json('error');
+//     }
+// });
+router.put('/employeelist',async(req,res)=>{
     try {
-        let id = req.params.id;
-        const { name, location, position, salary } = req.body;
-        const updatedEmployee = await employeeData.findByIdAndUpdate(
-            id,
-            { name, location, position, salary },
-            { new: true } 
-        );
-        res.json(updatedEmployee);
+       id = req.body._id
+       let updateData = {$set:req.body}
+       const updated = await employeeData.findByIdAndUpdate(id, updateData)
+        res.json('updated new')
     } catch (error) {
-        console.log(error);
-        res.json('error');
+        // console.log(error)
+        res.send('error')
     }
-});
-
+})
 
 router.delete('/employeelist/:id',async(req,res)=>{
     try {
